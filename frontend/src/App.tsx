@@ -1,6 +1,7 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Layout } from "./components";
+import { Layout } from "@/components";
+import { Button } from "@/components/ui/button";
 
 function App() {
 	const router = createBrowserRouter([
@@ -10,7 +11,12 @@ function App() {
 			children: [
 				{
 					index: true,
-					element: <div>Home</div>,
+					element: (
+						<div>
+							Home
+							<Button>Hello</Button>
+						</div>
+					),
 				},
 				{
 					path: ":id",
