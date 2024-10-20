@@ -4,6 +4,7 @@ import 'dotenv/config'
 import morgan from "morgan"
 import cors from "cors"
 import ErrorWithCode from "./utils/ErrorWithCode";
+import { brandsRouter, hotelsRouter } from "./routers";
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.use(morgan('dev'))
 app.get("/", (req: Request, res: Response) => {
 	res.send("Health Route");
 });
+
+app.use("/brands", brandsRouter);
+app.use("/hotels", hotelsRouter);
 
 app.use((error: ErrorWithCode, req: Request, res: Response, next: NextFunction): void => {
 	console.log(error.message)

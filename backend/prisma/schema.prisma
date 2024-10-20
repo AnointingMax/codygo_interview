@@ -9,3 +9,29 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Hotel {
+  id       Int      @id @default(autoincrement())
+  name     String
+  address  String
+  city     String
+  country  String
+  rating   Float?
+  features String[]
+  images   String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  brands Brand[] @relation("HotelBrandsPivot")
+}
+
+model Brand {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hotels Hotel[] @relation("HotelBrandsPivot")
+}
