@@ -3,7 +3,7 @@ import { THotelCreateOrUpdate, THotelSearch } from "../middleware/yupMiddleware"
 import prisma from "../prisma";
 
 export const getHotels = async (req: Request, res: Response) => {
-  const { search, country, rating, features } = req.query as unknown as THotelSearch;
+  const { search, country, rating, features, page = 1, perPage = 15 } = req.query as unknown as THotelSearch;
 
   const hotels = await prisma.hotel.findMany({
     where: {
@@ -25,16 +25,48 @@ export const getHotels = async (req: Request, res: Response) => {
       rating: {
         lte: rating
       },
-      features: {
-        hasSome: features
-      }
+      ...(!!features?.length && {
+        features: {
+          hasSome: features
+        }
+      })
     },
     include: {
       brands: true
-    }
+    },
+    take: Number(perPage),
+    skip: (Number(page) - 1) * Number(perPage)
   })
 
-  res.json({ message: "Hotels returned successfully", data: hotels })
+  const count = await prisma.hotel.count({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive"
+          }
+        },
+        {
+          address: {
+            contains: search,
+            mode: "insensitive"
+          }
+        }
+      ],
+      country,
+      rating: {
+        lte: rating
+      },
+      ...(!!features?.length && {
+        features: {
+          hasSome: features
+        }
+      })
+    },
+  })
+
+  res.json({ message: "Hotels returned successfully", data: hotels, count })
 }
 
 export const createHotel = async (req: Request, res: Response) => {

@@ -17,7 +17,9 @@ const validateRequestParameters = (resourceSchema: Yup.ObjectSchema<{}, Yup.AnyO
 };
 
 export const brandSearchValidator = Yup.object().shape({
-  name: Yup.string()
+  name: Yup.string(),
+  page: Yup.number().integer().positive(),
+  perPage: Yup.number().integer().positive(),
 });
 
 export const createOrUpdateBrandValidator = Yup.object().shape({
@@ -28,7 +30,9 @@ export const hotelSearchValidator = Yup.object().shape({
   search: Yup.string(),
   country: Yup.string().oneOf(COUNTRIES.map(country => country.code), "A valid country must be provided"),
   rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0"),
-  features: Yup.array().of(Yup.string().required())
+  features: Yup.array().of(Yup.string().required()),
+  page: Yup.number().integer().positive(),
+  perPage: Yup.number().integer().positive(),
 });
 
 export const createOrUpdateHotelValidator = Yup.object().shape({
