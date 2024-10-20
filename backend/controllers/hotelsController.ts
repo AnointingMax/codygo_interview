@@ -3,7 +3,7 @@ import { THotelCreateOrUpdate, THotelSearch } from "../middleware/yupMiddleware"
 import prisma from "../prisma";
 
 export const getHotels = async (req: Request, res: Response) => {
-  const { search, country, rating, features, page = 1, perPage = 15 } = req.query as unknown as THotelSearch;
+  const { search = "", country, rating = 5, features, page = 1, perPage = 15 } = req.query as unknown as THotelSearch;
 
   const hotels = await prisma.hotel.findMany({
     where: {
@@ -12,18 +12,18 @@ export const getHotels = async (req: Request, res: Response) => {
           name: {
             contains: search,
             mode: "insensitive"
-          }
+          },
         },
         {
           address: {
             contains: search,
             mode: "insensitive"
-          }
+          },
         }
       ],
       country,
       rating: {
-        lte: rating
+        lte: Number(rating)
       },
       ...(!!features?.length && {
         features: {
@@ -45,18 +45,18 @@ export const getHotels = async (req: Request, res: Response) => {
           name: {
             contains: search,
             mode: "insensitive"
-          }
+          },
         },
         {
           address: {
             contains: search,
             mode: "insensitive"
-          }
+          },
         }
       ],
       country,
       rating: {
-        lte: rating
+        lte: Number(rating)
       },
       ...(!!features?.length && {
         features: {
@@ -72,8 +72,19 @@ export const getHotels = async (req: Request, res: Response) => {
 export const createHotel = async (req: Request, res: Response) => {
   const { name, address, features, country, rating, city } = req.body as unknown as THotelCreateOrUpdate
 
+  const rawFiles = req.files as Express.Multer.File[]
+  const images = rawFiles?.map((file) => file.path)
+
   const hotel = await prisma.hotel.create({
-    data: { name, address, city, features, country, rating }
+    data: {
+      name,
+      address,
+      city,
+      features,
+      country,
+      rating: Number(rating),
+      images,
+    }
   })
 
   res.json({ message: "Hotel created successfully", data: hotel })
@@ -81,11 +92,24 @@ export const createHotel = async (req: Request, res: Response) => {
 
 export const updateHotel = async (req: Request, res: Response) => {
   const { id } = req.params
-  const { name } = req.body as unknown as THotelCreateOrUpdate
+  const { name, address, city, country, features, rating } = req.body as unknown as THotelCreateOrUpdate
+
+  const rawFiles = req.files as Express.Multer.File[]
+  const images = rawFiles?.map((file) => file.path)
 
   const hotel = await prisma.hotel.update({
     where: { id: Number(id) },
-    data: { name }
+    data: {
+      name,
+      address,
+      city,
+      country,
+      features,
+      rating: Number(rating),
+      images: {
+        push: images
+      }
+    }
   })
 
   res.json({ message: "Hotel updated successfully", hotel })

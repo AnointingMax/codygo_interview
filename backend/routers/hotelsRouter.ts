@@ -1,13 +1,28 @@
 import { Router } from "express"
 import { createHotel, deleteHotel, getHotels, updateHotel } from "../controllers/hotelsController";
 import use from "../utils/use";
-import validateRequestParameters, { createOrUpdateHotelValidator } from "../middleware/yupMiddleware";
+import validateRequestParameters, { createOrUpdateHotelValidator, hotelSearchValidator } from "../middleware/yupMiddleware";
+import upload from "../services/fileUpload";
 
 const hotelsRouter = Router()
 
-hotelsRouter.get("/", use(getHotels));
-hotelsRouter.post("/", validateRequestParameters(createOrUpdateHotelValidator, "body"), use(createHotel));
-hotelsRouter.patch("/:id", validateRequestParameters(createOrUpdateHotelValidator, "body"), use(updateHotel));
+hotelsRouter.get(
+  "/",
+  validateRequestParameters(hotelSearchValidator, "query"),
+  use(getHotels)
+);
+hotelsRouter.post(
+  "/",
+  upload.array("images[]"),
+  validateRequestParameters(createOrUpdateHotelValidator, "body"),
+  use(createHotel)
+);
+hotelsRouter.patch(
+  "/:id",
+  upload.array("images[]"),
+  validateRequestParameters(createOrUpdateHotelValidator, "body"),
+  use(updateHotel)
+);
 hotelsRouter.delete("/:id", use(deleteHotel));
 
 export default hotelsRouter
