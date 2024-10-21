@@ -1,5 +1,5 @@
 import { FEATURE_ICON, FEATURES, images } from "@/lib/constants";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Gallery as GridGallery } from "react-grid-gallery";
 import Lightbox from "yet-another-react-lightbox";
 import StarRatings from "react-star-ratings";
@@ -9,15 +9,19 @@ import { FilePenLine } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { HotelForm } from "@/panels";
 import { HotelType } from "@/types";
+import { GMapify } from "g-mapify";
+import "g-mapify/dist/index.css";
 
 const Details = () => {
 	const hotel: HotelType = {
 		id: 1,
-		name: "Le Meridien",
+		name: "Le Meriden",
 		address: "24 Ocean Avenue",
 		city: "Miami",
 		country: "US",
 		rating: 4.2,
+		latitude: 6.5700419,
+		longitude: 3.3758778,
 		features: [
 			"free_wifi",
 			"parking",
@@ -34,6 +38,7 @@ const Details = () => {
 		createdAt: "2024-10-20T03:27:45.840Z",
 		updatedAt: "2024-10-20T03:27:45.840Z",
 	};
+	const mapRef = useRef();
 
 	return (
 		<div className="grid max-w-6xl gap-6 mx-auto pb-28">
@@ -95,6 +100,20 @@ const Details = () => {
 					})}
 				</div>
 			</div>
+			<GMapify
+				appKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
+				ref={mapRef}
+				lat={hotel?.latitude}
+				lng={hotel?.longitude}
+				mapClassName="h-[400px]"
+				hasSearch
+				mapOptions={{
+					zoomControl: true,
+					fullscreenControl: true,
+					streetViewControl: true,
+					clickableIcons: true,
+				}}
+			/>
 			<div className="grid gap-1">
 				<span className="text-sm font-medium">Date created: {new Date(hotel.createdAt).toLocaleString()}</span>
 				<span className="text-sm font-medium">Date updated: {new Date(hotel.updatedAt).toLocaleString()}</span>

@@ -1,16 +1,19 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { COUNTRIES, COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
+import { BRANDS, COUNTRIES, FEATURES } from "@/lib/constants";
 import { CheckBox, Dropzone, Input, Slider } from "@/components";
-import Combobox from "@/components/Combobox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { HotelType } from "@/types";
 import { ErrorMessage, Formik } from "formik";
 import * as Yup from "yup";
+import { AddressFormatter, GMapify } from "g-mapify";
+import { useRef } from "react";
 
 type Props = { hotel?: HotelType };
 
 const HotelForm = ({ hotel }: Props) => {
+	const mapRef = useRef();
+
 	const initialValues: HotelFormType = {
 		id: hotel?.id,
 		name: hotel?.name ?? "",
@@ -18,6 +21,8 @@ const HotelForm = ({ hotel }: Props) => {
 		city: hotel?.city ?? "",
 		country: hotel?.country ?? "",
 		rating: hotel?.rating ?? 0,
+		latitude: hotel?.latitude ?? 0,
+		longitude: hotel?.longitude ?? 0,
 		features: hotel?.features ?? [],
 		brands: hotel?.brands?.map((brand) => brand.id) ?? [],
 		images: [],
@@ -34,6 +39,8 @@ const HotelForm = ({ hotel }: Props) => {
 			)
 			.required("Hotel country is required"),
 		rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0").required("Hotel rating is required"),
+		latitude: Yup.number().required("Hotel latitude is required"),
+		longitude: Yup.number().required("Hotel longitude is required"),
 		features: Yup.array()
 			.of(Yup.string().required())
 			.min(2, "You must provide at least 2 hotel features")
@@ -49,87 +56,108 @@ const HotelForm = ({ hotel }: Props) => {
 
 	return (
 		<Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={(values) => console.log(values)}>
-			{({ values, handleChange, handleSubmit, setFieldValue }) => (
-				<form onSubmit={handleSubmit} className="grid gap-4">
-					<Input placeholder="Enter hotel name" label="Hotel Name" value={values.name} name="name" onChange={handleChange} />
-					<Input placeholder="Enter hotel address" label="Hotel Address" value={values.address} name="address" onChange={handleChange} />
-					<Input placeholder="Enter hotel city" label="Hotel City" value={values.city} name="city" onChange={handleChange} />
-					<div>
-						<Accordion type="single" defaultValue="brands" className="w-full">
-							<AccordionItem value="brands">
-								<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Brands</AccordionTrigger>
-								<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto mb-3">
-									{FEATURES?.map(({ value, label }) => (
-										<CheckBox
-											key={value}
-											id={value}
-											label={label}
-											value={value}
-											checked={values.brands.includes(Number(value))}
-											onCheckedChange={(checked) =>
-												checked
-													? setFieldValue("brands", [...values.brands, Number(value)])
-													: setFieldValue(
-															"brands",
-															values.brands?.filter((brand) => brand !== Number(value))
-													  )
-											}
-										/>
-									))}
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
-						<ErrorMessage name="brands" component="div" className="block mt-1 text-xs text-destructive" />
-					</div>
-					<Combobox
-						className="w-full"
-						placeholder="Select country"
-						value={values.country}
-						setValue={(country) => setFieldValue("country", country)}
-						options={COUNTRY_OPTIONS}
-						label="Country"
-						name="country"
-					/>
-					<Slider
-						label="Rating"
-						defaultValue={[5]}
-						max={5}
-						step={1}
-						name="rating"
-						value={[values.rating]}
-						onValueChange={([rating]) => setFieldValue("rating", rating)}
-					/>
-					<div>
-						<Accordion type="single" defaultValue="features" className="w-full">
-							<AccordionItem value="features">
-								<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Features</AccordionTrigger>
-								<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto mb-3">
-									{FEATURES?.map(({ value, label }) => (
-										<CheckBox
-											key={value}
-											id={value}
-											label={label}
-											value={value}
-											checked={values.features.includes(value)}
-											onCheckedChange={(checked) =>
-												checked
-													? setFieldValue("features", [...values.features, value])
-													: setFieldValue(
-															"features",
-															values.features?.filter((feature) => feature !== value)
-													  )
-											}
-										/>
-									))}
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
-						<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
-					</div>
-					<Dropzone name="images" multiple />
-					<Button className="mt-6 ml-auto">Submit</Button>
-				</form>
-			)}
+			{({ values, handleChange, handleSubmit, setFieldValue }) => {
+				const onMapSelect = (status, data) => {
+					if (status) {
+						const formattedAddress = AddressFormatter(data.address_components);
+
+						console.log("data", data);
+						console.log("formattedAddress", formattedAddress);
+
+						setFieldValue("latitude", data.geometry.location.lat);
+						setFieldValue("longitude", data.geometry.location.lng);
+						setFieldValue("city", formattedAddress.locality);
+						setFieldValue("country", formattedAddress.country);
+						setFieldValue("address", [formattedAddress.streetNumber, formattedAddress.route, formattedAddress.state].join(" "));
+					}
+				};
+
+				return (
+					<form onSubmit={handleSubmit} className="grid gap-4">
+						<Input placeholder="Enter hotel name" label="Hotel Name" value={values.name} name="name" onChange={handleChange} />
+						<GMapify
+							appKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
+							ref={mapRef}
+							mapClassName="h-[400px]"
+							onSelect={onMapSelect}
+							hasSearch
+							mapOptions={{
+								zoomControl: true,
+								fullscreenControl: true,
+								streetViewControl: true,
+								clickableIcons: true,
+							}}
+						/>
+						<div>
+							<Accordion type="single" defaultValue="brands" className="w-full">
+								<AccordionItem value="brands">
+									<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Brands</AccordionTrigger>
+									<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto mb-3">
+										{BRANDS?.map(({ id, name }) => (
+											<CheckBox
+												key={id}
+												id={`brands-${id}`}
+												label={name}
+												value={id}
+												checked={values.brands.includes(Number(id))}
+												onCheckedChange={(checked) =>
+													checked
+														? setFieldValue("brands", [...values.brands, Number(id)])
+														: setFieldValue(
+																"brands",
+																values.brands?.filter((brand) => brand !== Number(id))
+														  )
+												}
+											/>
+										))}
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
+							<ErrorMessage name="brands" component="div" className="block mt-1 text-xs text-destructive" />
+						</div>
+						<Slider
+							label="Rating"
+							defaultValue={[5]}
+							max={5}
+							step={1}
+							name="rating"
+							value={[values.rating]}
+							onValueChange={([rating]) => setFieldValue("rating", rating)}
+						/>
+						<div>
+							<Accordion type="single" defaultValue="features" className="w-full">
+								<AccordionItem value="features">
+									<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">
+										Features
+									</AccordionTrigger>
+									<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto mb-3">
+										{FEATURES?.map(({ value, label }) => (
+											<CheckBox
+												key={value}
+												id={value}
+												label={label}
+												value={value}
+												checked={values.features.includes(value)}
+												onCheckedChange={(checked) =>
+													checked
+														? setFieldValue("features", [...values.features, value])
+														: setFieldValue(
+																"features",
+																values.features?.filter((feature) => feature !== value)
+														  )
+												}
+											/>
+										))}
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
+							<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
+						</div>
+						<Dropzone name="images" multiple />
+						<Button className="mt-6 ml-auto">Submit</Button>
+					</form>
+				);
+			}}
 		</Formik>
 	);
 };

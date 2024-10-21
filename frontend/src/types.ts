@@ -5,6 +5,8 @@ export type HotelType = {
    city: string;
    country: string;
    rating: number;
+   longitude: number;
+   latitude: number;
    features: string[];
    images: string[];
    brands: Brand[],
