@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { COUNTRIES, COUNTRY_OPTIONS, FEATURES } from "@/assets/constants";
-import { CheckBox, Input, Slider } from "@/components";
+import { CheckBox, Dropzone, Input, Slider } from "@/components";
 import Combobox from "@/components/Combobox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ const HotelForm = () => {
 		rating: 0,
 		features: [],
 		brands: [],
-		images: "",
+		images: [],
 	};
 	const validationSchema = Yup.object().shape({
 		name: Yup.string().required("Hotel name is required"),
@@ -33,7 +33,7 @@ const HotelForm = () => {
 			.of(Yup.string().required())
 			.min(2, "You must provide at least 2 hotel features")
 			.required("Hotel features are required"),
-		images: Yup.string().required("This field is required"),
+		images: Yup.array().min(2, "You must provide at least 2 images").required("Hotel images are required"),
 		brands: Yup.array().of(Yup.string().required()).min(1, "You must provide at least 1 hotel brand").required("Hotel brands are required"),
 	});
 	type HotelFormType = Yup.InferType<typeof validationSchema>;
@@ -117,6 +117,7 @@ const HotelForm = () => {
 						</Accordion>
 						<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
 					</div>
+					<Dropzone name="images" multiple />
 					<Button className="mt-6 ml-auto">Submit</Button>
 				</form>
 			)}
