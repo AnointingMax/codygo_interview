@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { BRANDS, COUNTRIES, FEATURES } from "@/lib/constants";
+import { BRANDS, FEATURES } from "@/lib/constants";
 import { CheckBox, Dropzone, Input, Slider } from "@/components";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -32,12 +32,7 @@ const HotelForm = ({ hotel }: Props) => {
 		name: Yup.string().required("Hotel name is required"),
 		address: Yup.string().required("Hotel address is required"),
 		city: Yup.string().required("Hotel city is required"),
-		country: Yup.string()
-			.oneOf(
-				COUNTRIES.map((country) => country.code),
-				"A valid country must be provided"
-			)
-			.required("Hotel country is required"),
+		country: Yup.string().required("Hotel country is required"),
 		rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0").required("Hotel rating is required"),
 		latitude: Yup.number().required("Hotel latitude is required"),
 		longitude: Yup.number().required("Hotel longitude is required"),
@@ -151,7 +146,9 @@ const HotelForm = ({ hotel }: Props) => {
 							<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
 						</div>
 						<Dropzone name="images" multiple />
-						<Button className="mt-6 ml-auto">Submit</Button>
+						<Button type="submit" className="mt-6 ml-auto">
+							Submit
+						</Button>
 					</form>
 				);
 			}}

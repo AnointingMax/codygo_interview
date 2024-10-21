@@ -1754,7 +1754,7 @@ export const COUNTRIES = [
    },
 ];
 
-export const COUNTRY_OPTIONS = COUNTRIES?.map(country => ({ value: country.code, label: country.name }))
+export const COUNTRY_OPTIONS = COUNTRIES?.map(country => ({ value: country.name, label: country.name }))
 
 export const FEATURES = [
    { "value": "free_wifi", "label": "Free Wi-Fi" },
