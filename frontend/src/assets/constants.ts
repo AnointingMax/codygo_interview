@@ -778,7 +778,7 @@ export const COUNTRIES = [
    },
    {
       name: 'Jan Mayen',
-      code: 'SJ',
+      code: 'SJ2',
       timezone: 'W. Europe Standard Time',
       utc: 'UTC+01:00',
       mobileCode: '+47',

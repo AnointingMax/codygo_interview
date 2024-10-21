@@ -4,6 +4,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { useState } from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import { ErrorMessage } from "formik";
 
 export interface SelectOption {
 	label: string;
@@ -18,9 +19,10 @@ type Props = {
 	className?: string;
 	label?: string;
 	labelClassName?: string;
+	name?: string;
 };
 
-const Combobox = ({ options, placeholder, value, setValue, className, label, labelClassName }: Props) => {
+const Combobox = ({ options, placeholder, value, setValue, className, label, labelClassName, ...props }: Props) => {
 	const [open, setOpen] = useState(false);
 
 	return (
@@ -48,6 +50,7 @@ const Combobox = ({ options, placeholder, value, setValue, className, label, lab
 									<CommandItem
 										key={option.value}
 										value={option.value}
+										keywords={[option.label]}
 										onSelect={(currentValue) => {
 											setValue(currentValue === value ? "" : currentValue);
 											setOpen(false);
@@ -62,6 +65,7 @@ const Combobox = ({ options, placeholder, value, setValue, className, label, lab
 					</Command>
 				</PopoverContent>
 			</Popover>
+			{!!props["name"] && <ErrorMessage name={props["name"]} component="div" className="block mt-1 text-xs text-destructive" />}
 		</div>
 	);
 };
