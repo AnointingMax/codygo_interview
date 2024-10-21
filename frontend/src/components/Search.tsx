@@ -16,7 +16,7 @@ const Search = ({ panel }: Props) => {
 	const { search, setSearch, brands, setBrands, country, setCountry, rating, setRating, features, setFeatures, resetFilters } = useSearchContext();
 
 	return (
-		<div className={cn("gap-2", !panel && "hidden md:grid")}>
+		<div className={cn("gap-2 h-fit", !panel && "hidden md:grid")}>
 			<div className="flex items-center justify-between">
 				<h2 className="font-semibold ">Search</h2>
 				<Button variant="custom" size="sm" className="px-0 text-xs text-red-500" onClick={resetFilters}>

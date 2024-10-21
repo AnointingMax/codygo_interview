@@ -1,3 +1,5 @@
+import { AirVent, Cable, Cigarette, Clock1, CloudCog, Dumbbell, EggFried, Martini, PawPrint, Plane, Projector, Sparkles, SquareParking, Telescope, UserPlus, Users, UtensilsCrossed, WashingMachine, Waves, Wifi } from "lucide-react";
+
 export const COUNTRIES = [
    {
       name: 'Afghanistan',
@@ -1775,3 +1777,26 @@ export const FEATURES = [
    { "value": "breakfast_included", "label": "Breakfast Included" },
    { "value": "concierge_service", "label": "Concierge Service" }
 ]
+
+export const FEATURE_ICON = {
+   "free_wifi": Wifi,
+   "parking": SquareParking,
+   "air_conditioning": AirVent,
+   "swimming_pool": Waves,
+   "fitness_center": Dumbbell,
+   "restaurant": UtensilsCrossed,
+   "bar": Martini,
+   "room_service": CloudCog,
+   "airport_shuttle": Plane,
+   "pet_friendly": PawPrint,
+   "spa": Sparkles,
+   "non_smoking_rooms": Cigarette,
+   "meeting_facilities": Projector,
+   "family_rooms": Users,
+   "24_hour_front_desk": Clock1,
+   "laundry_service": WashingMachine,
+   "electric_vehicle_charging": Cable,
+   "terrace": Telescope,
+   "breakfast_included": EggFried,
+   "concierge_service": UserPlus
+};
