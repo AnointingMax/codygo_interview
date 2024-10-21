@@ -3,8 +3,8 @@ import { createContext, Dispatch, SetStateAction, useState, FC, useContext, Reac
 interface SearchContextType {
 	search: string;
 	setSearch: Dispatch<SetStateAction<string>>;
-	brands: string[];
-	setBrands: Dispatch<SetStateAction<string[]>>;
+	brands: number[];
+	setBrands: Dispatch<SetStateAction<number[]>>;
 	country: string;
 	setCountry: Dispatch<SetStateAction<string>>;
 	rating: number;
@@ -18,7 +18,7 @@ export const SearchContext = createContext<SearchContextType | undefined>(undefi
 
 const SearchContextProvider: FC<{ children: ReactNode | ((context: SearchContextType) => ReactNode) }> = ({ children }) => {
 	const [search, setSearch] = useState("");
-	const [brands, setBrands] = useState<string[]>([]);
+	const [brands, setBrands] = useState<number[]>([]);
 	const [country, setCountry] = useState("");
 	const [rating, setRating] = useState(5);
 	const [features, setFeatures] = useState<string[]>([]);

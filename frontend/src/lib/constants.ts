@@ -1779,6 +1779,14 @@ export const FEATURES = [
    { "value": "concierge_service", "label": "Concierge Service" }
 ]
 
+export const BRANDS = [
+   { id: 1, name: "Luxury" },
+   { id: 2, name: "Budget" },
+   { id: 3, name: "Boutique" },
+   { id: 4, name: "Resort" },
+   { id: 5, name: "Business" }
+];
+
 export const FEATURE_ICON = {
    "free_wifi": Wifi,
    "parking": SquareParking,

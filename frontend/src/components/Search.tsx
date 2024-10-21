@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import Input from "./Input";
 import Combobox from "./Combobox";
-import { COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
+import { BRANDS, COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
 import Slider from "./Slider";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import CheckBox from "./CheckBox";
@@ -29,18 +29,18 @@ const Search = ({ panel }: Props) => {
 					<AccordionItem value="brands">
 						<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Brands</AccordionTrigger>
 						<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto">
-							{FEATURES?.map(({ value, label }) => (
+							{BRANDS?.map(({ id, name }) => (
 								<CheckBox
-									key={value}
-									id={value}
-									label={label}
-									value={value}
-									checked={brands.includes(value)}
-									onCheckedChange={(checked) => {
-										return checked
-											? setBrands((prevState) => [...prevState, value])
-											: setBrands((prevState) => prevState?.filter((feature) => feature !== value));
-									}}
+									key={id}
+									id={`brands-${id}`}
+									label={name}
+									value={id}
+									checked={brands.includes(Number(id))}
+									onCheckedChange={(checked) =>
+										checked
+											? setBrands((prevState) => [...prevState, Number(id)])
+											: setBrands((prevState) => prevState?.filter((brand) => brand !== Number(id)))
+									}
 								/>
 							))}
 						</AccordionContent>
