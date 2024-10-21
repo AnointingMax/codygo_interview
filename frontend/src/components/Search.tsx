@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import Input from "./Input";
 import Combobox from "./Combobox";
-import { COUNTRY_OPTIONS, FEATURES } from "@/assets/constants";
+import { COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
 import Slider from "./Slider";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import CheckBox from "./CheckBox";
