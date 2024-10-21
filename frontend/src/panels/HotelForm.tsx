@@ -61,9 +61,6 @@ const HotelForm = ({ hotel }: Props) => {
 					if (status) {
 						const formattedAddress = AddressFormatter(data.address_components);
 
-						console.log("data", data);
-						console.log("formattedAddress", formattedAddress);
-
 						setFieldValue("latitude", data.geometry.location.lat);
 						setFieldValue("longitude", data.geometry.location.lng);
 						setFieldValue("city", formattedAddress.locality);
