@@ -1,6 +1,5 @@
 import * as Yup from "yup"
 import { NextFunction, Request, Response } from "express";
-import { COUNTRIES } from "../../utils/assets";
 
 type ReqParameter = keyof Request
 
@@ -28,7 +27,7 @@ export const createOrUpdateBrandValidator = Yup.object().shape({
 
 export const hotelSearchValidator = Yup.object().shape({
   search: Yup.string(),
-  country: Yup.string().oneOf(COUNTRIES.map(country => country.code), "A valid country must be provided"),
+  country: Yup.string(),
   rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0"),
   features: Yup.array().of(Yup.string().required()),
   page: Yup.number().integer().positive(),
@@ -39,7 +38,7 @@ export const createOrUpdateHotelValidator = Yup.object().shape({
   name: Yup.string().required("Hotel name is required"),
   address: Yup.string().required("Hotel address is required"),
   city: Yup.string().required("Hotel city is required"),
-  country: Yup.string().oneOf(COUNTRIES.map(country => country.code), "A valid country must be provided").required("Hotel country is required"),
+  country: Yup.string().required("Hotel country is required"),
   rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0"),
   features: Yup.array().of(Yup.string().required()).min(2, "You must provide at least 2 hotel features").required("Hotel features are required")
 });
