@@ -30,6 +30,7 @@ export const hotelSearchValidator = Yup.object().shape({
   country: Yup.string(),
   rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0"),
   features: Yup.array().of(Yup.string().required()),
+  brands: Yup.array().of(Yup.number().required()),
   page: Yup.number().integer().positive(),
   perPage: Yup.number().integer().positive(),
 });
@@ -38,9 +39,12 @@ export const createOrUpdateHotelValidator = Yup.object().shape({
   name: Yup.string().required("Hotel name is required"),
   address: Yup.string().required("Hotel address is required"),
   city: Yup.string().required("Hotel city is required"),
+  latitude: Yup.number().required("Hotel latitude is required"),
+  longitude: Yup.number().required("Hotel longitude is required"),
   country: Yup.string().required("Hotel country is required"),
   rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0"),
-  features: Yup.array().of(Yup.string().required()).min(2, "You must provide at least 2 hotel features").required("Hotel features are required")
+  features: Yup.array().of(Yup.string().required()).min(2, "You must provide at least 2 hotel features").required("Hotel features are required"),
+  brands: Yup.array().of(Yup.number().required()).min(1, "You must provide at least 1 hotel brand").required("Hotel brand is required"),
 });
 
 export type TBrandSearch = Yup.InferType<typeof brandSearchValidator>;

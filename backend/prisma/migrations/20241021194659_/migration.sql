@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Hotel" ALTER COLUMN "latitude" DROP DEFAULT,
+ALTER COLUMN "longitude" DROP DEFAULT;
