@@ -66,6 +66,10 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	.detail-section {
+		@apply text-lg font-semibold mb-2;
+	}
 }
 
 html {

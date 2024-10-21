@@ -31,10 +31,12 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.10",
+    "react-grid-gallery": "^1.0.1",
     "react-router-dom": "^6.27.0",
     "react-star-ratings": "^2.3.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "yet-another-react-lightbox": "^3.21.6",
     "yup": "^1.4.0"
   },
   "devDependencies": {
