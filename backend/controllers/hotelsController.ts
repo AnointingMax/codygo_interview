@@ -112,11 +112,19 @@ export const updateHotel = async (req: Request, res: Response) => {
   const { id } = req.params
   const { name, latitude, longitude, address, city, country, features, rating, brands } = req.body as unknown as THotelCreateOrUpdate
 
+  const hotelInfo = await prisma.hotel.findUnique({
+    where: { id: Number(id) },
+    select: { images: true },
+  });
+
   const rawFiles = req.files as Express.Multer.File[]
   const images = rawFiles?.map((file) => {
     const { height, width } = sizeOf(file.path)
     return { src: file.path, height, width }
   })
+
+  const existingImages = Array.isArray(hotelInfo?.images) ? hotelInfo?.images : [];
+  const updatedImages = [...existingImages, ...images];
 
   const hotel = await prisma.hotel.update({
     where: { id: Number(id) },
@@ -129,9 +137,7 @@ export const updateHotel = async (req: Request, res: Response) => {
       country,
       features,
       rating: Number(rating),
-      images: {
-        push: images
-      },
+      images: updatedImages,
       brands: {
         set: brands.map(brand => ({ id: Number(brand) }))
       }
