@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.ts",
     "start": "node dist/index.ts",
-    "build": "npx tsc"
+    "build": "npm install --force && npx prisma migrate dev && npx tsc"
   },
   "keywords": [],
   "author": "",
