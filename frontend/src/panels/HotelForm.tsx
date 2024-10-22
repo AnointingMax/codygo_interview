@@ -1,18 +1,22 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { BRANDS, FEATURES } from "@/lib/constants";
+import { FEATURES } from "@/lib/constants";
 import { CheckBox, Dropzone, Input, Slider } from "@/components";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { HotelType } from "@/types";
+import { HotelFormType, hotelFormValidationSchema, HotelType } from "@/types";
 import { ErrorMessage, Formik } from "formik";
-import * as Yup from "yup";
 import { AddressFormatter, GMapify } from "g-mapify";
 import { useRef } from "react";
+import { createHotel, getBrands, updateHotel } from "@/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { showSuccessToast } from "@/utils/functions";
+import { SheetClose } from "@/components/ui/sheet";
 
 type Props = { hotel?: HotelType };
 
 const HotelForm = ({ hotel }: Props) => {
 	const mapRef = useRef();
+	const queryClient = useQueryClient();
 
 	const initialValues: HotelFormType = {
 		id: hotel?.id,
@@ -27,30 +31,23 @@ const HotelForm = ({ hotel }: Props) => {
 		brands: hotel?.brands?.map((brand) => brand.id) ?? [],
 		images: [],
 	};
-	const validationSchema = Yup.object().shape({
-		id: Yup.number(),
-		name: Yup.string().required("Hotel name is required"),
-		address: Yup.string().required("Hotel address is required"),
-		city: Yup.string().required("Hotel city is required"),
-		country: Yup.string().required("Hotel country is required"),
-		rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0").required("Hotel rating is required"),
-		latitude: Yup.number().required("Hotel latitude is required"),
-		longitude: Yup.number().required("Hotel longitude is required"),
-		features: Yup.array()
-			.of(Yup.string().required())
-			.min(2, "You must provide at least 2 hotel features")
-			.required("Hotel features are required"),
-		images: Yup.array().when("id", {
-			is: (val) => !!val,
-			then: (schema) => schema,
-			otherwise: (schema) => schema.min(2, "You must provide at least 2 images").required("Hotel images are required"),
-		}),
-		brands: Yup.array().of(Yup.number().required()).min(1, "You must provide at least 1 hotel brand").required("Hotel brands are required"),
+
+	const { data } = useQuery({
+		queryKey: ["brands"],
+		queryFn: getBrands,
+		suspense: true,
 	});
-	type HotelFormType = Yup.InferType<typeof validationSchema>;
+	const { mutate, isLoading } = useMutation(!hotel ? createHotel : updateHotel, {
+		onSuccess: async ({ message }) => {
+			showSuccessToast(message, { closeButton: true });
+			await queryClient.refetchQueries({ queryKey: [!hotel ? "hotels" : "hotel"], type: "active" });
+		},
+	});
+
+	const brandsResponse = data?.data;
 
 	return (
-		<Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={(values) => console.log(values)}>
+		<Formik initialValues={initialValues} validationSchema={hotelFormValidationSchema} onSubmit={(values) => mutate(values)}>
 			{({ values, handleChange, handleSubmit, setFieldValue }) => {
 				const onMapSelect = (status, data) => {
 					if (status) {
@@ -70,6 +67,8 @@ const HotelForm = ({ hotel }: Props) => {
 						<GMapify
 							appKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
 							ref={mapRef}
+							lat={values.latitude}
+							lng={values.longitude}
 							mapClassName="h-[400px]"
 							onSelect={onMapSelect}
 							hasSearch
@@ -85,7 +84,7 @@ const HotelForm = ({ hotel }: Props) => {
 								<AccordionItem value="brands">
 									<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Brands</AccordionTrigger>
 									<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto mb-3">
-										{BRANDS?.map(({ id, name }) => (
+										{brandsResponse?.map(({ id, name }) => (
 											<CheckBox
 												key={id}
 												id={`brands-${id}`}
@@ -146,9 +145,11 @@ const HotelForm = ({ hotel }: Props) => {
 							<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
 						</div>
 						<Dropzone name="images" multiple />
-						<Button type="submit" className="mt-6 ml-auto">
-							Submit
-						</Button>
+						<SheetClose asChild>
+							<Button disabled={isLoading} type="submit" className="mt-6 ml-auto">
+								Submit
+							</Button>
+						</SheetClose>
 					</form>
 				);
 			}}

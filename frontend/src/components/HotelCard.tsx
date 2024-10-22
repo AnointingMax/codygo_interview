@@ -17,7 +17,7 @@ const HotelCard = ({ hotel }: Props) => {
 	const extraFeatureCount = hotel?.features.length - featureCount;
 
 	return (
-		<Link to="#">
+		<Link to={{ pathname: `/${hotel.id}` }}>
 			<ImageCarousel images={hotel.images} />
 			<div className="pt-2">
 				<p className="font-semibold">{hotel.name}</p>
@@ -45,27 +45,28 @@ const HotelCard = ({ hotel }: Props) => {
 const ImageCarousel = ({ images }: { images: Image[] }) => {
 	const [api, setApi] = useState<CarouselApi>();
 
-	return <Carousel
-		setApi={setApi}
-		opts={{
-			align: "start",
-			loop: true,
-		}}
-	>
-		<CarouselContent>
-			{images
-				.map((image, index) => {
-					const path = [import.meta.env.VITE_API_URL, import.meta.env.VITE_IMAGE_PATH, image.src].join("/")
+	return (
+		<Carousel
+			setApi={setApi}
+			opts={{
+				align: "start",
+				loop: true,
+			}}
+		>
+			<CarouselContent>
+				{images.map((image, index) => {
+					const path = [import.meta.env.VITE_API_URL, import.meta.env.VITE_IMAGE_PATH, image.src].join("/");
 					return (
 						<CarouselItem key={index}>
-							<img crossOrigin="anonymous" src={path} className="w-full rounded-md" alt="" />
+							<img crossOrigin="anonymous" src={path} className="w-full rounded-md aspect-[315/210] object-cover" alt="" />
 						</CarouselItem>
-					)
+					);
 				})}
-		</CarouselContent>
-		<CarouselDots dotApi={api} />
-	</Carousel>
-}
+			</CarouselContent>
+			<CarouselDots dotApi={api} />
+		</Carousel>
+	);
+};
 
 const CarouselDots = ({ dotApi }: { dotApi: CarouselApi }) => {
 	const [current, setCurrent] = useState(0);
