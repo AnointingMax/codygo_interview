@@ -1,12 +1,14 @@
 import { cn } from "@/lib/utils";
 import Input from "./Input";
 import Combobox from "./Combobox";
-import { BRANDS, COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
+import { COUNTRY_OPTIONS, FEATURES } from "@/lib/constants";
 import Slider from "./Slider";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import CheckBox from "./CheckBox";
 import { Button } from "./ui/button";
 import { useSearchContext } from "@/context";
+import { useQuery } from "@tanstack/react-query";
+import { getBrands } from "@/api";
 
 type Props = {
 	panel?: boolean;
@@ -14,6 +16,14 @@ type Props = {
 
 const Search = ({ panel }: Props) => {
 	const { search, setSearch, brands, setBrands, country, setCountry, rating, setRating, features, setFeatures, resetFilters } = useSearchContext();
+
+	const { data } = useQuery({
+		queryKey: ["brands"],
+		queryFn: getBrands,
+		suspense: true,
+	});
+
+	const brandsResponse = data?.data;
 
 	return (
 		<div className={cn("gap-2 h-fit", !panel && "hidden md:grid")}>
@@ -29,7 +39,7 @@ const Search = ({ panel }: Props) => {
 					<AccordionItem value="brands">
 						<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Brands</AccordionTrigger>
 						<AccordionContent className="grid gap-1 max-h-[200px] overflow-y-auto">
-							{BRANDS?.map(({ id, name }) => (
+							{brandsResponse?.map(({ id, name }) => (
 								<CheckBox
 									key={id}
 									id={`brands-${id}`}
