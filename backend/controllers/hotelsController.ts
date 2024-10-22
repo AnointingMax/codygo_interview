@@ -4,7 +4,7 @@ import prisma from "../prisma";
 import sizeOf from 'image-size'
 
 export const getHotels = async (req: Request, res: Response) => {
-  const { search = "", country, rating = 5, features, page = 1, perPage = 15, brands } = req.query as unknown as THotelSearch;
+  const { search = "", country, rating = 5, features, brands } = req.query as unknown as THotelSearch;
 
   const hotels = await prisma.hotel.findMany({
     where: {
@@ -44,8 +44,6 @@ export const getHotels = async (req: Request, res: Response) => {
     include: {
       brands: true
     },
-    take: Number(perPage),
-    skip: (Number(page) - 1) * Number(perPage)
   })
 
   const count = await prisma.hotel.count({
