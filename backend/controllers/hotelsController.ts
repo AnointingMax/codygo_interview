@@ -85,7 +85,7 @@ export const createHotel = async (req: Request, res: Response) => {
   const rawFiles = req.files as Express.Multer.File[]
   const images = rawFiles?.map((file) => {
     const { height, width } = sizeOf(file.path)
-    return { src: file.path, height, width }
+    return { src: file.filename, height, width }
   })
 
   const hotel = await prisma.hotel.create({
