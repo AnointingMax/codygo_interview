@@ -124,7 +124,7 @@ export const updateHotel = async (req: Request, res: Response) => {
   })
 
   const existingImages = Array.isArray(hotelInfo?.images) ? hotelInfo?.images : [];
-  const updatedImages = [...existingImages, ...images];
+  const updatedImages = [...(existingImages as any[]), ...images];
 
   const hotel = await prisma.hotel.update({
     where: { id: Number(id) },
