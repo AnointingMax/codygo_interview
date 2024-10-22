@@ -5,5 +5,7 @@ import Slider from "./Slider"
 import CheckBox from "./CheckBox"
 import HotelCard from "./HotelCard"
 import Dropzone from "./Dropzone"
+import Fallback from "./Fallback"
+import EmptyState from "./EmptyState"
 
-export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone }
+export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone, Fallback, EmptyState }

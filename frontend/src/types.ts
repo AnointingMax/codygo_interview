@@ -9,12 +9,12 @@ export type HotelType = {
    latitude: number;
    features: string[];
    images: string[];
-   brands: Brand[],
+   brands: BrandType[],
    createdAt: string,
    updatedAt: string,
 };
 
-export type Brand = {
+export type BrandType = {
    id: number;
    name: string;
    createdAt: string,

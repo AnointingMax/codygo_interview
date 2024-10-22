@@ -1,7 +1,8 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Layout } from "@/components";
+import { Fallback, Layout } from "@/components";
 import { Details, Home } from "@/pages";
+import { Suspense } from "react";
 
 function App() {
 	const router = createBrowserRouter([
@@ -21,7 +22,11 @@ function App() {
 		},
 	]);
 
-	return <RouterProvider router={router} />;
+	return (
+		<Suspense fallback={<Fallback />}>
+			<RouterProvider router={router} />
+		</Suspense>
+	);
 }
 
 export default App;

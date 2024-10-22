@@ -1,14 +1,18 @@
 import { Link, Outlet } from "react-router-dom";
-import { Toaster } from "./ui/toaster";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { HotelForm } from "@/panels";
+import { Toaster } from "./ui/sonner";
+import { Suspense } from "react";
+import Fallback from "./Fallback";
 
 const Layout = () => {
 	return (
 		<div className="*:px-8">
 			<TopNav />
-			<Outlet />
+			<Suspense fallback={<Fallback />}>
+				<Outlet />
+			</Suspense>
 			<Toaster />
 		</div>
 	);
