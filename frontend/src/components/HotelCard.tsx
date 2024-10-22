@@ -55,10 +55,9 @@ const ImageCarousel = ({ images }: { images: Image[] }) => {
 		>
 			<CarouselContent>
 				{images.map((image, index) => {
-					const path = [import.meta.env.VITE_API_URL, import.meta.env.VITE_IMAGE_PATH, image.src].join("/");
 					return (
 						<CarouselItem key={index}>
-							<img crossOrigin="anonymous" src={path} className="w-full rounded-md aspect-[315/210] object-cover" alt="" />
+							<img crossOrigin="anonymous" src={image.src} className="w-full rounded-md aspect-[315/210] object-cover" alt="" />
 						</CarouselItem>
 					);
 				})}

@@ -23,7 +23,7 @@ const Details = () => {
 		suspense: true,
 	});
 	const { mutate, isLoading } = useMutation(deleteHotel, {
-		onSuccess: () => {},
+		onSuccess: () => { },
 	});
 
 	const hotel = data?.data;
@@ -54,7 +54,7 @@ const Details = () => {
 										<FilePenLine className="size-[18px] flex-shrink-0" />
 										Edit Hotel
 									</span>
-									<Sheet open={open} onOpenChange={() => {}}>
+									<Sheet open={open} onOpenChange={() => { }}>
 										<SheetContent setOpen={setOpen}>
 											<SheetHeader>
 												<SheetTitle>Edit Hotel</SheetTitle>
@@ -64,7 +64,7 @@ const Details = () => {
 									</Sheet>
 								</>
 							),
-							onClick: () => {},
+							onClick: () => setOpen(true),
 						},
 						{
 							label: (
@@ -79,12 +79,7 @@ const Details = () => {
 					]}
 				/>
 			</div>
-			<Gallery
-				images={hotel?.images.map(({ src, ...rest }) => ({
-					src: [import.meta.env.VITE_API_URL, import.meta.env.VITE_IMAGE_PATH, src].join("/"),
-					...rest,
-				}))}
-			/>
+			<Gallery images={hotel?.images} />
 			<div>
 				<h2 className="detail-section">Address</h2>
 				<div className="grid gap-x-4 gap-y-1 grid-cols-[100px,1fr]">
@@ -116,7 +111,7 @@ const Details = () => {
 					})}
 				</div>
 			</div>
-			<GMap coordinates={{ lat: hotel.latitude, lng: hotel.longitude }} setValues={() => {}} />
+			<GMap coordinates={{ lat: hotel.latitude, lng: hotel.longitude }} setValues={() => { }} />
 			<div className="grid gap-1">
 				<span className="text-sm font-medium">Date created: {new Date(hotel?.createdAt).toLocaleString()}</span>
 				<span className="text-sm font-medium">Date updated: {new Date(hotel?.updatedAt).toLocaleString()}</span>

@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { THotelCreateOrUpdate, THotelSearch } from "../middleware/yupMiddleware";
 import prisma from "../prisma";
 import sizeOf from 'image-size'
+import { uploadImages, uploadSingleImage } from "../services/cloudinary";
 
 export const getHotels = async (req: Request, res: Response) => {
   const { search = "", country, rating = 5, features, brands } = req.query as unknown as THotelSearch;
@@ -81,10 +82,8 @@ export const createHotel = async (req: Request, res: Response) => {
   const { name, latitude, longitude, address, features, country, rating, city, brands } = req.body as unknown as THotelCreateOrUpdate
 
   const rawFiles = req.files as Express.Multer.File[]
-  const images = rawFiles?.map((file) => {
-    const { height, width } = sizeOf(file.path)
-    return { src: file.filename, height, width }
-  })
+  const files = rawFiles?.map((file) => file.path)
+  const images = await uploadImages(files)
 
   const hotel = await prisma.hotel.create({
     data: {
@@ -116,10 +115,8 @@ export const updateHotel = async (req: Request, res: Response) => {
   });
 
   const rawFiles = req.files as Express.Multer.File[]
-  const images = rawFiles?.map((file) => {
-    const { height, width } = sizeOf(file.path)
-    return { src: file.filename, height, width }
-  })
+  const files = rawFiles?.map((file) => file.path)
+  const images = await uploadImages(files)
 
   const existingImages = Array.isArray(hotelInfo?.images) ? hotelInfo?.images : [];
   const updatedImages = [...(existingImages as any[]), ...images];

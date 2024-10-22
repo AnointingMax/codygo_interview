@@ -22,7 +22,7 @@ const Dropzone = <CustomFormType,>({ name, multiple = false }: Props<CustomFormT
 		[name, setFieldValue]
 	);
 
-	const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		multiple,
 		...(multiple && { maxFiles: 5 }),
@@ -73,7 +73,7 @@ const Dropzone = <CustomFormType,>({ name, multiple = false }: Props<CustomFormT
 				</p>
 				<p className="max-w-[290px] text-center text-xs font-medium text-[#8F97A5]">Only .jpeg, .jpg and png files are allowed</p>
 			</div>
-			<Button type="button" variant="default" onClick={open}>
+			<Button type="button" variant="default">
 				Upload file{multiple && "(s)"}
 			</Button>
 		</div>
