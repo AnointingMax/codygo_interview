@@ -7,5 +7,6 @@ import HotelCard from "./HotelCard"
 import Dropzone from "./Dropzone"
 import Fallback from "./Fallback"
 import EmptyState from "./EmptyState"
+import CustomPopover from "./CustomPopover"
 
-export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone, Fallback, EmptyState }
+export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone, Fallback, EmptyState, CustomPopover }

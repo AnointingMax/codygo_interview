@@ -18,7 +18,7 @@ instance.interceptors.response.use(
 
 type APIResponseType<T> = {
    message: string,
-   data: T
+   data?: T
 }
 
 export const getBrands = (): Promise<APIResponseType<BrandType[]>> => instance.get("/brands");
@@ -30,3 +30,5 @@ export const getHotel = (id: number | string): Promise<APIResponseType<HotelType
 export const createHotel = (data: HotelFormType): Promise<APIResponseType<HotelType>> => instance.post("/hotels", data, { headers: { "Content-Type": "multipart/form-data" } })
 
 export const updateHotel = ({ id, ...data }: HotelFormType): Promise<APIResponseType<HotelType>> => instance.patch(`/hotels/${id}`, data, { headers: { "Content-Type": "multipart/form-data" } })
+
+export const deleteHotel = (id: number | string): Promise<APIResponseType<undefined>> => instance.delete(`/hotels/${id}`)

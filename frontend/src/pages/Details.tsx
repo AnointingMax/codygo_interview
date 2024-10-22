@@ -5,14 +5,15 @@ import Lightbox from "yet-another-react-lightbox";
 import StarRatings from "react-star-ratings";
 import "yet-another-react-lightbox/styles.css";
 import { Button } from "@/components/ui/button";
-import { FilePenLine } from "lucide-react";
+import { FilePenLine, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { HotelForm } from "@/panels";
 import { GMapify } from "g-mapify";
 import "g-mapify/dist/index.css";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getHotel } from "@/api";
+import { deleteHotel, getHotel } from "@/api";
+import { CustomPopover } from "@/components";
 
 const Details = () => {
 	const { id } = useParams();
@@ -23,6 +24,9 @@ const Details = () => {
 		queryFn: () => getHotel(id as string),
 		suspense: true,
 	});
+	const { mutate, isLoading } = useMutation(deleteHotel, {
+		onSuccess: () => {},
+	});
 
 	const hotel = data?.data;
 
@@ -30,31 +34,52 @@ const Details = () => {
 
 	return (
 		<div className="grid max-w-6xl gap-6 mx-auto pb-28">
-			<div>
-				<div className="flex items-center gap-2">
-					<h1 className="text-lg font-bold">{hotel?.name}</h1>
-					<Sheet>
-						<SheetTrigger asChild>
-							<Button variant="custom" className="gap-2 px-0 text-default">
-								<FilePenLine />
-								Edit
-							</Button>
-						</SheetTrigger>
-						<SheetContent className="">
-							<SheetHeader>
-								<SheetTitle>Edit Hotel</SheetTitle>
-							</SheetHeader>
-							<HotelForm hotel={hotel} />
-						</SheetContent>
-					</Sheet>
+			<div className="flex items-center justify-between gap-2">
+				<div>
+					<h1 className="mb-1 text-lg font-bold">{hotel?.name}</h1>
+					<div className="flex items-center gap-x-1 gap-y-1 max-w-[650px] flex-wrap">
+						{hotel?.brands?.map((brand, index) => (
+							<span key={index} className="flex items-center gap-1 px-2 py-1 bg-black rounded-full">
+								<p className="text-xs font-medium text-white">{brand?.name}</p>
+							</span>
+						))}
+					</div>
 				</div>
-				<div className="flex items-center gap-x-1 gap-y-1 max-w-[650px] flex-wrap">
-					{hotel?.brands?.map((brand, index) => (
-						<span key={index} className="flex items-center gap-1 px-2 py-1 bg-black rounded-full">
-							<p className="text-xs font-medium text-white">{brand?.name}</p>
-						</span>
-					))}
-				</div>
+				<CustomPopover
+					align="end"
+					trigger={<Button>Actions</Button>}
+					actions={[
+						{
+							label: (
+								<Sheet>
+									<SheetTrigger asChild>
+										<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-primary-transparent hover:text-primary">
+											<FilePenLine className="size-[18px] flex-shrink-0" />
+											Edit Hotel
+										</span>
+									</SheetTrigger>
+									<SheetContent className="">
+										<SheetHeader>
+											<SheetTitle>Edit Hotel</SheetTitle>
+										</SheetHeader>
+										<HotelForm hotel={hotel} />
+									</SheetContent>
+								</Sheet>
+							),
+							onClick: () => {},
+						},
+						{
+							label: (
+								<span className="flex items-center gap-2 text-sm font-medium text-destructive hover:bg-destructive/10">
+									<Trash2 className="size-[18px] flex-shrink-0" />
+									Delete Hotel
+								</span>
+							),
+							disabled: isLoading,
+							onClick: () => mutate(id as string),
+						},
+					]}
+				/>
 			</div>
 			<Gallery
 				images={hotel?.images.map(({ src, ...rest }) => ({
