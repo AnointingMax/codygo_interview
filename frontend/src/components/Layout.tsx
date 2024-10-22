@@ -40,7 +40,7 @@ const TopNav = () => {
 					{
 						label: (
 							<>
-								<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-primary-transparent hover:text-primary">
+								<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-gray-200 hover:text-primary">
 									<Plus className="size-[18px] flex-shrink-0" />
 									Create Hotel
 								</span>
@@ -60,7 +60,7 @@ const TopNav = () => {
 						label: (
 							<Sheet>
 								<SheetTrigger asChild>
-									<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-primary-transparent hover:text-primary">
+									<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-gray-200 hover:text-primary">
 										<Plus className="size-[18px] flex-shrink-0" />
 										Create Brand
 									</span>
