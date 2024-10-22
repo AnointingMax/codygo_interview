@@ -32,7 +32,7 @@ const HotelCard = ({ hotel }: Props) => {
 						.fill("")
 						.map((_, index) => (
 							<CarouselItem key={index}>
-								<img src={Hotel} className="rounded-md" alt="" />
+								<img src={Hotel} className="w-full rounded-md" alt="" />
 							</CarouselItem>
 						))}
 				</CarouselContent>
