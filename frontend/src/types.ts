@@ -45,4 +45,10 @@ export const hotelFormValidationSchema = Yup.object().shape({
    brands: Yup.array().of(Yup.number().required()).min(1, "You must provide at least 1 hotel brand").required("Hotel brands are required"),
 });
 
+export const brandFormValidationSchema = Yup.object().shape({
+   id: Yup.number(),
+   name: Yup.string().required("Brand name is required"),
+});
+
 export type HotelFormType = Yup.InferType<typeof hotelFormValidationSchema>;
+export type BrandFormType = Yup.InferType<typeof brandFormValidationSchema>;

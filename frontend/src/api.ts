@@ -1,6 +1,6 @@
 import axios from "axios"
 import { removeEmptyValues, showErrorToast } from "./utils/functions";
-import { BrandType, HotelFormType, HotelType } from "./types";
+import { BrandFormType, BrandType, HotelFormType, HotelType } from "./types";
 
 const instance = axios.create({
    baseURL: import.meta.env.VITE_API_URL,
@@ -32,3 +32,7 @@ export const createHotel = (data: HotelFormType): Promise<APIResponseType<HotelT
 export const updateHotel = ({ id, ...data }: HotelFormType): Promise<APIResponseType<HotelType>> => instance.patch(`/hotels/${id}`, data, { headers: { "Content-Type": "multipart/form-data" } })
 
 export const deleteHotel = (id: number | string): Promise<APIResponseType<undefined>> => instance.delete(`/hotels/${id}`)
+
+export const createBrand = (data: BrandFormType): Promise<APIResponseType<BrandType>> => instance.post("/brands", data)
+
+export const updateBrand = ({ id, ...data }: BrandFormType): Promise<APIResponseType<BrandType>> => instance.post(`/brands/${id}`, data)

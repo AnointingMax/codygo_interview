@@ -1,3 +1,4 @@
 import HotelForm from "./HotelForm"
+import BrandForm from "./BrandForm"
 
-export { HotelForm }
+export { HotelForm, BrandForm }
