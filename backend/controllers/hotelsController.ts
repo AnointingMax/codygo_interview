@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { THotelCreateOrUpdate, THotelSearch } from "../middleware/yupMiddleware";
 import prisma from "../prisma";
+import sizeOf from 'image-size'
 
 export const getHotels = async (req: Request, res: Response) => {
   const { search = "", country, rating = 5, features, page = 1, perPage = 15, brands } = req.query as unknown as THotelSearch;
@@ -82,7 +83,10 @@ export const createHotel = async (req: Request, res: Response) => {
   const { name, latitude, longitude, address, features, country, rating, city, brands } = req.body as unknown as THotelCreateOrUpdate
 
   const rawFiles = req.files as Express.Multer.File[]
-  const images = rawFiles?.map((file) => file.path)
+  const images = rawFiles?.map((file) => {
+    const { height, width } = sizeOf(file.path)
+    return { src: file.path, height, width }
+  })
 
   const hotel = await prisma.hotel.create({
     data: {
@@ -109,7 +113,10 @@ export const updateHotel = async (req: Request, res: Response) => {
   const { name, latitude, longitude, address, city, country, features, rating, brands } = req.body as unknown as THotelCreateOrUpdate
 
   const rawFiles = req.files as Express.Multer.File[]
-  const images = rawFiles?.map((file) => file.path)
+  const images = rawFiles?.map((file) => {
+    const { height, width } = sizeOf(file.path)
+    return { src: file.path, height, width }
+  })
 
   const hotel = await prisma.hotel.update({
     where: { id: Number(id) },
