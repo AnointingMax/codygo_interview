@@ -120,7 +120,7 @@ export const updateHotel = async (req: Request, res: Response) => {
   const rawFiles = req.files as Express.Multer.File[]
   const images = rawFiles?.map((file) => {
     const { height, width } = sizeOf(file.path)
-    return { src: file.path, height, width }
+    return { src: file.filename, height, width }
   })
 
   const existingImages = Array.isArray(hotelInfo?.images) ? hotelInfo?.images : [];
@@ -144,7 +144,7 @@ export const updateHotel = async (req: Request, res: Response) => {
     }
   })
 
-  res.json({ message: "Hotel updated successfully", hotel })
+  res.json({ message: "Hotel updated successfully", data: hotel })
 }
 
 export const deleteHotel = async (req: Request, res: Response) => {

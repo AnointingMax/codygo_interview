@@ -5,6 +5,7 @@ import morgan from "morgan"
 import cors from "cors"
 import ErrorWithCode from "./utils/ErrorWithCode";
 import { brandsRouter, hotelsRouter } from "./routers";
+import path from "path";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 	res.send("Health Route");
 });
 
+app.use('/images', express.static(path.join(__dirname, './uploads')))
 app.use("/brands", brandsRouter);
 app.use("/hotels", hotelsRouter);
 
