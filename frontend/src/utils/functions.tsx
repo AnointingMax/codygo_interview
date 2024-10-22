@@ -33,3 +33,22 @@ export const showErrorToast = (message: string | ReactNode, data?: ExternalToast
 		icon: <CircleX className="text-red-500 size-5" />,
 		...data,
 	});
+
+export const removeEmptyValues = (obj: Record<string, any>): Record<string, any> => {
+	const cleanedObject = {};
+
+	Object.keys(obj).forEach((key) => {
+		const value = obj[key];
+
+		// Check if the value is not an empty string, empty array, or null
+		if (
+			value !== "" &&
+			value !== null &&
+			!(Array.isArray(value) && value.length === 0)
+		) {
+			cleanedObject[key] = value;
+		}
+	});
+
+	return cleanedObject;
+}

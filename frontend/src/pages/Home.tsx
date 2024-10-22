@@ -2,7 +2,7 @@ import { getHotels } from "@/api";
 import { EmptyState, Fallback, HotelCard, Search } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SearchContextProvider } from "@/context";
+import { SearchContextProvider, useSearchContext } from "@/context";
 import { useQuery } from "@tanstack/react-query";
 import { ListFilter } from "lucide-react";
 
@@ -21,9 +21,11 @@ const Home = () => {
 };
 
 const ListRender = () => {
+	const { search, brands, features, country, rating } = useSearchContext();
+
 	const { data, isLoading } = useQuery({
-		queryKey: ["hotels"],
-		queryFn: () => getHotels({}),
+		queryKey: ["hotels", search, brands, features, country, rating],
+		queryFn: () => getHotels({ search, brands, features, country, rating }),
 	});
 
 	const hotels = data?.data;

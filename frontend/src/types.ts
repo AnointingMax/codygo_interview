@@ -1,3 +1,5 @@
+import { Image } from "react-grid-gallery";
+
 export type HotelType = {
    id: number;
    name: string;
@@ -8,7 +10,7 @@ export type HotelType = {
    longitude: number;
    latitude: number;
    features: string[];
-   images: string[];
+   images: Image[];
    brands: BrandType[],
    createdAt: string,
    updatedAt: string,

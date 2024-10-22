@@ -1,11 +1,11 @@
 import { FEATURE_ICON } from "@/lib/constants";
 import { HotelType } from "@/types";
 import StarRatings from "react-star-ratings";
-import Hotel from "@/assets/images/hotel.jpeg";
 import { Link } from "react-router-dom";
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from "./ui/carousel";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Image } from "react-grid-gallery";
 
 type Props = {
 	hotel: HotelType;
@@ -13,31 +13,12 @@ type Props = {
 const featureCount = 3;
 
 const HotelCard = ({ hotel }: Props) => {
-	const [api, setApi] = useState<CarouselApi>();
-
 	const firstFourFeatures = hotel?.features?.slice(0, featureCount);
 	const extraFeatureCount = hotel?.features.length - featureCount;
 
 	return (
 		<Link to="#">
-			<Carousel
-				setApi={setApi}
-				opts={{
-					align: "start",
-					loop: true,
-				}}
-			>
-				<CarouselContent>
-					{Array(5)
-						.fill("")
-						.map((_, index) => (
-							<CarouselItem key={index}>
-								<img src={Hotel} className="w-full rounded-md" alt="" />
-							</CarouselItem>
-						))}
-				</CarouselContent>
-				<CarouselDots dotApi={api} />
-			</Carousel>
+			<ImageCarousel images={hotel.images} />
 			<div className="pt-2">
 				<p className="font-semibold">{hotel.name}</p>
 				<p className="text-sm text-black/70">
@@ -60,6 +41,31 @@ const HotelCard = ({ hotel }: Props) => {
 		</Link>
 	);
 };
+
+const ImageCarousel = ({ images }: { images: Image[] }) => {
+	const [api, setApi] = useState<CarouselApi>();
+
+	return <Carousel
+		setApi={setApi}
+		opts={{
+			align: "start",
+			loop: true,
+		}}
+	>
+		<CarouselContent>
+			{images
+				.map((image, index) => {
+					const path = [import.meta.env.VITE_API_URL, import.meta.env.VITE_IMAGE_PATH, image.src].join("/")
+					return (
+						<CarouselItem key={index}>
+							<img crossOrigin="anonymous" src={path} className="w-full rounded-md" alt="" />
+						</CarouselItem>
+					)
+				})}
+		</CarouselContent>
+		<CarouselDots dotApi={api} />
+	</Carousel>
+}
 
 const CarouselDots = ({ dotApi }: { dotApi: CarouselApi }) => {
 	const [current, setCurrent] = useState(0);

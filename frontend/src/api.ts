@@ -1,5 +1,5 @@
 import axios from "axios"
-import { showErrorToast } from "./utils/functions";
+import { removeEmptyValues, showErrorToast } from "./utils/functions";
 import { BrandType, HotelType } from "./types";
 
 const instance = axios.create({
@@ -23,4 +23,4 @@ type APIResponseType<T> = {
 
 export const getBrands = (): Promise<APIResponseType<BrandType[]>> => instance.get("/brands");
 
-export const getHotels = (params): Promise<APIResponseType<HotelType[]>> => instance.get("/hotels", { params });
+export const getHotels = (params): Promise<APIResponseType<HotelType[]>> => instance.get("/hotels", { params: removeEmptyValues(params) });
