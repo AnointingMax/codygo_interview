@@ -156,3 +156,14 @@ export const deleteHotel = async (req: Request, res: Response) => {
 
   res.json({ message: "Hotel deleted successfully" })
 }
+
+export const getHotel = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  const hotel = await prisma.hotel.findUniqueOrThrow({
+    where: { id: Number(id) },
+    include: { brands: true }
+  })
+
+  res.json({ message: "Hotel retrieved successfully", data: hotel })
+}

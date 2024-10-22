@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createHotel, deleteHotel, getHotels, updateHotel } from "../controllers/hotelsController";
+import { createHotel, deleteHotel, getHotel, getHotels, updateHotel } from "../controllers/hotelsController";
 import use from "../utils/use";
 import validateRequestParameters, { createOrUpdateHotelValidator, hotelSearchValidator } from "../middleware/yupMiddleware";
 import upload from "../services/fileUpload";
@@ -10,6 +10,10 @@ hotelsRouter.get(
   "/",
   validateRequestParameters(hotelSearchValidator, "query"),
   use(getHotels)
+);
+hotelsRouter.get(
+  "/:id",
+  use(getHotel)
 );
 hotelsRouter.post(
   "/",
