@@ -3,7 +3,7 @@ import prisma from "../prisma";
 import { TBrandCreateOrUpdate, TBrandSearch } from "../middleware/yupMiddleware";
 
 export const getBrands = async (req: Request, res: Response) => {
-  const { name, page = 1, perPage = 15 } = req.query as unknown as TBrandSearch;
+  const { name } = req.query as unknown as TBrandSearch;
 
   const brands = await prisma.brand.findMany({
     where: {
@@ -12,20 +12,9 @@ export const getBrands = async (req: Request, res: Response) => {
         mode: "insensitive"
       },
     },
-    take: Number(perPage),
-    skip: (Number(page) - 1) * Number(perPage)
   })
 
-  const count = await prisma.brand.count({
-    where: {
-      name: {
-        contains: name,
-        mode: "insensitive"
-      },
-    }
-  })
-
-  res.json({ message: "Brands returned successfully", data: brands, count })
+  res.json({ message: "Brands returned successfully", data: brands })
 }
 
 export const createBrand = async (req: Request, res: Response) => {
