@@ -8,5 +8,6 @@ import Dropzone from "./Dropzone"
 import Fallback from "./Fallback"
 import EmptyState from "./EmptyState"
 import CustomPopover from "./CustomPopover"
+import GMap from "./GMap"
 
-export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone, Fallback, EmptyState, CustomPopover }
+export { Layout, Search, Input, Slider, CheckBox, HotelCard, Dropzone, Fallback, EmptyState, CustomPopover, GMap }

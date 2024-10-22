@@ -1,23 +1,21 @@
 import { FEATURE_ICON, FEATURES } from "@/lib/constants";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Gallery as GridGallery, Image, ThumbnailImageProps } from "react-grid-gallery";
 import Lightbox from "yet-another-react-lightbox";
 import StarRatings from "react-star-ratings";
 import "yet-another-react-lightbox/styles.css";
 import { Button } from "@/components/ui/button";
 import { FilePenLine, Trash2 } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { HotelForm } from "@/panels";
-import { GMapify } from "g-mapify";
-import "g-mapify/dist/index.css";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { deleteHotel, getHotel } from "@/api";
-import { CustomPopover } from "@/components";
+import { CustomPopover, GMap } from "@/components";
 
 const Details = () => {
 	const { id } = useParams();
-	const mapRef = useRef();
+	const [open, setOpen] = useState(false);
 
 	const { data } = useQuery({
 		queryKey: ["hotel", id],
@@ -51,20 +49,20 @@ const Details = () => {
 					actions={[
 						{
 							label: (
-								<Sheet>
-									<SheetTrigger asChild>
-										<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-primary-transparent hover:text-primary">
-											<FilePenLine className="size-[18px] flex-shrink-0" />
-											Edit Hotel
-										</span>
-									</SheetTrigger>
-									<SheetContent className="">
-										<SheetHeader>
-											<SheetTitle>Edit Hotel</SheetTitle>
-										</SheetHeader>
-										<HotelForm hotel={hotel} />
-									</SheetContent>
-								</Sheet>
+								<>
+									<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-primary-transparent hover:text-primary">
+										<FilePenLine className="size-[18px] flex-shrink-0" />
+										Edit Hotel
+									</span>
+									<Sheet open={open} onOpenChange={() => {}}>
+										<SheetContent setOpen={setOpen}>
+											<SheetHeader>
+												<SheetTitle>Edit Hotel</SheetTitle>
+											</SheetHeader>
+											<HotelForm hotel={hotel} setOpen={setOpen} />
+										</SheetContent>
+									</Sheet>
+								</>
 							),
 							onClick: () => {},
 						},
@@ -118,20 +116,7 @@ const Details = () => {
 					})}
 				</div>
 			</div>
-			<GMapify
-				appKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
-				ref={mapRef}
-				lat={hotel?.latitude}
-				lng={hotel?.longitude}
-				mapClassName="h-[400px]"
-				hasSearch
-				mapOptions={{
-					zoomControl: true,
-					fullscreenControl: true,
-					streetViewControl: true,
-					clickableIcons: true,
-				}}
-			/>
+			<GMap coordinates={{ lat: hotel.latitude, lng: hotel.longitude }} setValues={() => {}} />
 			<div className="grid gap-1">
 				<span className="text-sm font-medium">Date created: {new Date(hotel?.createdAt).toLocaleString()}</span>
 				<span className="text-sm font-medium">Date updated: {new Date(hotel?.updatedAt).toLocaleString()}</span>

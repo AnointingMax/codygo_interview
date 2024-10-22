@@ -75,3 +75,8 @@
 html {
 	font-family: "Plus Jakarta Sans", sans-serif;
 }
+
+.pac-container {
+	z-index: 999999999999999999999999 !important;
+	pointer-events: auto;
+}

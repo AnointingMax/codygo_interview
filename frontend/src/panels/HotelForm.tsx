@@ -1,21 +1,17 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { FEATURES } from "@/lib/constants";
-import { CheckBox, Dropzone, Input, Slider } from "@/components";
+import { CheckBox, Dropzone, GMap, Input, Slider } from "@/components";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { HotelFormType, hotelFormValidationSchema, HotelType } from "@/types";
 import { ErrorMessage, Formik } from "formik";
-import { AddressFormatter, GMapify } from "g-mapify";
-import { useRef } from "react";
 import { createHotel, getBrands, updateHotel } from "@/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showSuccessToast } from "@/utils/functions";
-import { SheetClose } from "@/components/ui/sheet";
 
-type Props = { hotel?: HotelType };
+type Props = { hotel?: HotelType; setOpen: React.Dispatch<React.SetStateAction<boolean>> };
 
-const HotelForm = ({ hotel }: Props) => {
-	const mapRef = useRef();
+const HotelForm = ({ hotel, setOpen }: Props) => {
 	const queryClient = useQueryClient();
 
 	const initialValues: HotelFormType = {
@@ -40,6 +36,7 @@ const HotelForm = ({ hotel }: Props) => {
 	const { mutate, isLoading } = useMutation(!hotel ? createHotel : updateHotel, {
 		onSuccess: async ({ message }) => {
 			showSuccessToast(message, { closeButton: true });
+			setOpen(false);
 			await queryClient.refetchQueries({ queryKey: [!hotel ? "hotels" : "hotel"], type: "active" });
 		},
 	});
@@ -49,34 +46,18 @@ const HotelForm = ({ hotel }: Props) => {
 	return (
 		<Formik initialValues={initialValues} validationSchema={hotelFormValidationSchema} onSubmit={(values) => mutate(values)}>
 			{({ values, handleChange, handleSubmit, setFieldValue }) => {
-				const onMapSelect = (status, data) => {
-					if (status) {
-						const formattedAddress = AddressFormatter(data.address_components);
-
-						setFieldValue("latitude", data.geometry.location.lat);
-						setFieldValue("longitude", data.geometry.location.lng);
-						setFieldValue("city", formattedAddress.locality);
-						setFieldValue("country", formattedAddress.country);
-						setFieldValue("address", [formattedAddress.streetNumber, formattedAddress.route, formattedAddress.state].join(" "));
-					}
-				};
-
 				return (
 					<form onSubmit={handleSubmit} className="grid gap-4">
 						<Input placeholder="Enter hotel name" label="Hotel Name" value={values.name} name="name" onChange={handleChange} />
-						<GMapify
-							appKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
-							ref={mapRef}
-							lat={values.latitude}
-							lng={values.longitude}
-							mapClassName="h-[400px]"
-							onSelect={onMapSelect}
-							hasSearch
-							mapOptions={{
-								zoomControl: true,
-								fullscreenControl: true,
-								streetViewControl: true,
-								clickableIcons: true,
+						<GMap
+							setValues={(data) => {
+								const country = data?.formatted_address?.split(", ")?.at(-1);
+								const city = data?.formatted_address?.split(", ")?.at(-2);
+								setFieldValue("latitude", data?.geometry?.location?.lat());
+								setFieldValue("longitude", data?.geometry?.location?.lng());
+								setFieldValue("city", city);
+								setFieldValue("country", country);
+								setFieldValue("address", data?.formatted_address);
 							}}
 						/>
 						<div>
@@ -145,11 +126,9 @@ const HotelForm = ({ hotel }: Props) => {
 							<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
 						</div>
 						<Dropzone name="images" multiple />
-						<SheetClose asChild>
-							<Button disabled={isLoading} type="submit" className="mt-6 ml-auto">
-								Submit
-							</Button>
-						</SheetClose>
+						<Button disabled={isLoading} type="submit" className="mt-6 ml-auto">
+							Submit
+						</Button>
 					</form>
 				);
 			}}
