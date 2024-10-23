@@ -92,8 +92,6 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
 		if (!placeAutocomplete) return;
 
 		placeAutocomplete.addListener("place_changed", () => {
-			console.log(placeAutocomplete.getPlace());
-
 			onPlaceSelect(placeAutocomplete.getPlace());
 		});
 	}, [onPlaceSelect, placeAutocomplete]);
