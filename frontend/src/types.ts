@@ -31,8 +31,8 @@ export const hotelFormValidationSchema = Yup.object().shape({
    city: Yup.string().required("Hotel city is required"),
    country: Yup.string().required("Hotel country is required"),
    rating: Yup.number().max(5, "Maximum rating is 5").min(0, "Minimum rating is 0").required("Hotel rating is required"),
-   latitude: Yup.number().required("Hotel latitude is required"),
-   longitude: Yup.number().required("Hotel longitude is required"),
+   latitude: Yup.number().required("Hotel latitude is required").typeError("Hotel address could not be gotten from map"),
+   longitude: Yup.number().required("Hotel longitude is required").typeError("Hotel address could not be gotten from map"),
    features: Yup.array()
       .of(Yup.string().required())
       .min(2, "You must provide at least 2 hotel features")

@@ -9,12 +9,14 @@ import { FilePenLine, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { HotelForm } from "@/panels";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { deleteHotel, getHotel } from "@/api";
 import { CustomPopover, GMap } from "@/components";
+import { showSuccessToast } from "@/utils/functions";
 
 const Details = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 
 	const { data } = useQuery({
@@ -23,7 +25,10 @@ const Details = () => {
 		suspense: true,
 	});
 	const { mutate, isLoading } = useMutation(deleteHotel, {
-		onSuccess: () => { },
+		onSuccess: ({ message }) => {
+			showSuccessToast(message, { closeButton: true });
+			navigate("/");
+		},
 	});
 
 	const hotel = data?.data;
@@ -31,92 +36,92 @@ const Details = () => {
 	if (!hotel) return null;
 
 	return (
-		<div className="grid max-w-6xl gap-6 mx-auto pb-28">
-			<div className="flex items-center justify-between gap-2">
-				<div>
-					<h1 className="mb-1 text-lg font-bold">{hotel?.name}</h1>
-					<div className="flex items-center gap-x-1 gap-y-1 max-w-[650px] flex-wrap">
-						{hotel?.brands?.map((brand, index) => (
-							<span key={index} className="flex items-center gap-1 px-2 py-1 bg-black rounded-full">
-								<p className="text-xs font-medium text-white">{brand?.name}</p>
-							</span>
-						))}
+		<>
+			<div className="grid max-w-6xl gap-6 mx-auto pb-28">
+				<div className="flex items-center justify-between gap-2">
+					<div>
+						<h1 className="mb-1 text-lg font-bold">{hotel?.name}</h1>
+						<div className="flex items-center gap-x-1 gap-y-1 max-w-[650px] flex-wrap">
+							{hotel?.brands?.map((brand, index) => (
+								<span key={index} className="flex items-center gap-1 px-2 py-1 bg-black rounded-full">
+									<p className="text-xs font-medium text-white">{brand?.name}</p>
+								</span>
+							))}
+						</div>
 					</div>
-				</div>
-				<CustomPopover
-					align="end"
-					trigger={<Button>Actions</Button>}
-					actions={[
-						{
-							label: (
-								<>
+					<CustomPopover
+						align="end"
+						trigger={<Button>Actions</Button>}
+						actions={[
+							{
+								label: (
 									<span className="flex items-center gap-2 text-sm font-medium text-[#404040] hover:bg-gray-200 hover:text-primary">
 										<FilePenLine className="size-[18px] flex-shrink-0" />
 										Edit Hotel
 									</span>
-									<Sheet open={open} onOpenChange={() => { }}>
-										<SheetContent setOpen={setOpen}>
-											<SheetHeader>
-												<SheetTitle>Edit Hotel</SheetTitle>
-											</SheetHeader>
-											<HotelForm hotel={hotel} setOpen={setOpen} />
-										</SheetContent>
-									</Sheet>
-								</>
-							),
-							onClick: () => setOpen(true),
-						},
-						{
-							label: (
-								<span className="flex items-center gap-2 text-sm font-medium text-destructive hover:bg-destructive/10">
-									<Trash2 className="size-[18px] flex-shrink-0" />
-									Delete Hotel
-								</span>
-							),
-							disabled: isLoading,
-							onClick: () => mutate(id as string),
-						},
-					]}
-				/>
-			</div>
-			<Gallery images={hotel?.images} />
-			<div>
-				<h2 className="detail-section">Address</h2>
-				<div className="grid gap-x-4 gap-y-1 grid-cols-[100px,1fr]">
-					<div className="font-medium text-black/90">Street:</div>
-					<div>{hotel?.address}</div>
-					<div className="font-medium text-black/90">City:</div>
-					<div>{hotel?.city}</div>
-					<div className="font-medium text-black/90">Country:</div>
-					<div>{hotel?.country}</div>
+								),
+								onClick: () => setOpen(true),
+							},
+							{
+								label: (
+									<span className="flex items-center gap-2 text-sm font-medium text-destructive hover:bg-destructive/10">
+										<Trash2 className="size-[18px] flex-shrink-0" />
+										Delete Hotel
+									</span>
+								),
+								disabled: isLoading,
+								onClick: () => mutate(id as string),
+							},
+						]}
+					/>
 				</div>
-			</div>
-			<div>
-				<h2 className="detail-section">Rating</h2>
-				<StarRatings rating={hotel?.rating} starDimension="30px" starSpacing="7px" starRatedColor="var(--default-color)" />
-			</div>
-			<div>
-				<h2 className="detail-section">Hotel Features</h2>
-				<div className="flex items-center mt-1 gap-x-4 gap-y-4 max-w-[650px] flex-wrap">
-					{hotel?.features?.map((featureKey, index) => {
-						const Icon = FEATURE_ICON[featureKey];
-						const feature = FEATURES.find((feature) => feature.value === featureKey);
+				<Gallery images={hotel?.images} />
+				<div>
+					<h2 className="detail-section">Address</h2>
+					<div className="grid gap-x-4 gap-y-1 grid-cols-[100px,1fr]">
+						<div className="font-medium text-black/90">Street:</div>
+						<div>{hotel?.address}</div>
+						<div className="font-medium text-black/90">City:</div>
+						<div>{hotel?.city}</div>
+						<div className="font-medium text-black/90">Country:</div>
+						<div>{hotel?.country}</div>
+					</div>
+				</div>
+				<div>
+					<h2 className="detail-section">Rating</h2>
+					<StarRatings rating={hotel?.rating} starDimension="30px" starSpacing="7px" starRatedColor="var(--default-color)" />
+				</div>
+				<div>
+					<h2 className="detail-section">Hotel Features</h2>
+					<div className="flex items-center mt-1 gap-x-4 gap-y-4 max-w-[650px] flex-wrap">
+						{hotel?.features?.map((featureKey, index) => {
+							const Icon = FEATURE_ICON[featureKey];
+							const feature = FEATURES.find((feature) => feature.value === featureKey);
 
-						return (
-							<span key={index} className="flex items-center gap-1 px-4 py-1.5 rounded-full bg-default/20">
-								<Icon className="w-[16px] h-[16px]" />
-								<p className="text-sm font-medium">{feature?.label}</p>
-							</span>
-						);
-					})}
+							return (
+								<span key={index} className="flex items-center gap-1 px-4 py-1.5 rounded-full bg-default/20">
+									<Icon className="w-[16px] h-[16px]" />
+									<p className="text-sm font-medium">{feature?.label}</p>
+								</span>
+							);
+						})}
+					</div>
+				</div>
+				<GMap coordinates={{ lat: hotel.latitude, lng: hotel.longitude }} setValues={() => {}} />
+				<div className="grid gap-1">
+					<span className="text-sm font-medium">Date created: {new Date(hotel?.createdAt).toLocaleString()}</span>
+					<span className="text-sm font-medium">Date updated: {new Date(hotel?.updatedAt).toLocaleString()}</span>
 				</div>
 			</div>
-			<GMap coordinates={{ lat: hotel.latitude, lng: hotel.longitude }} setValues={() => { }} />
-			<div className="grid gap-1">
-				<span className="text-sm font-medium">Date created: {new Date(hotel?.createdAt).toLocaleString()}</span>
-				<span className="text-sm font-medium">Date updated: {new Date(hotel?.updatedAt).toLocaleString()}</span>
-			</div>
-		</div>
+			<Sheet open={open} onOpenChange={() => {}}>
+				<SheetContent setOpen={setOpen}>
+					<SheetHeader>
+						<SheetTitle>Edit Hotel</SheetTitle>
+					</SheetHeader>
+					<HotelForm hotel={hotel} setOpen={setOpen} />
+				</SheetContent>
+			</Sheet>
+		</>
 	);
 };
 

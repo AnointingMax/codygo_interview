@@ -51,13 +51,18 @@ const HotelForm = ({ hotel, setOpen }: Props) => {
 						<Input placeholder="Enter hotel name" label="Hotel Name" value={values.name} name="name" onChange={handleChange} />
 						<GMap
 							setValues={(data) => {
-								const country = data?.formatted_address?.split(", ")?.at(-1);
-								const city = data?.formatted_address?.split(", ")?.at(-2);
-								setFieldValue("latitude", data?.geometry?.location?.lat());
-								setFieldValue("longitude", data?.geometry?.location?.lng());
-								setFieldValue("city", city);
-								setFieldValue("country", country);
-								setFieldValue("address", data?.formatted_address);
+								const address = data?.formatted_address;
+
+								const country = address?.split(", ")?.at(-1);
+								const city = address?.split(", ")?.at(-2);
+								const latitude = data?.geometry?.location?.lat();
+								const longitude = data?.geometry?.location?.lng();
+
+								setFieldValue("latitude", latitude, true);
+								setFieldValue("longitude", longitude, true);
+								setFieldValue("city", city, true);
+								setFieldValue("country", country, true);
+								setFieldValue("address", address, true);
 							}}
 						/>
 						<div>
@@ -91,7 +96,7 @@ const HotelForm = ({ hotel, setOpen }: Props) => {
 							label="Rating"
 							defaultValue={[5]}
 							max={5}
-							step={1}
+							step={0.1}
 							name="rating"
 							value={[values.rating]}
 							onValueChange={([rating]) => setFieldValue("rating", rating)}
@@ -126,6 +131,12 @@ const HotelForm = ({ hotel, setOpen }: Props) => {
 							<ErrorMessage name="features" component="div" className="block mt-1 text-xs text-destructive" />
 						</div>
 						<Dropzone name="images" multiple />
+						<div>
+							<ErrorMessage name="latitude" component="div" className="block mt-1 text-xs text-destructive" />
+							<ErrorMessage name="city" component="div" className="block mt-1 text-xs text-destructive" />
+							<ErrorMessage name="country" component="div" className="block mt-1 text-xs text-destructive" />
+							<ErrorMessage name="address" component="div" className="block mt-1 text-xs text-destructive" />
+						</div>
 						<Button disabled={isLoading} type="submit" className="mt-6 ml-auto">
 							Submit
 						</Button>

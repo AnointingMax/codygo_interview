@@ -64,7 +64,7 @@ const Search = ({ panel }: Props) => {
 					options={COUNTRY_OPTIONS}
 					label="Country"
 				/>
-				<Slider label="Rating" defaultValue={[5]} max={5} step={1} value={[rating]} onValueChange={([value]) => setRating(value)} />
+				<Slider label="Rating" defaultValue={[5]} max={5} step={0.1} value={[rating]} onValueChange={([value]) => setRating(value)} />
 				<Accordion type="single" collapsible className="w-full">
 					<AccordionItem value="features">
 						<AccordionTrigger className="text-[0.8rem] font-medium text-black/50 hover:no-underline">Features</AccordionTrigger>
