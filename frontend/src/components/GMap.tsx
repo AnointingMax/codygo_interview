@@ -3,9 +3,7 @@ import {
 	ControlPosition,
 	MapControl,
 	AdvancedMarker,
-	ControlPosition,
 	Map,
-	MapControl,
 	useMap,
 	useMapsLibrary,
 	useAdvancedMarkerRef,
@@ -33,8 +31,6 @@ const GMap = ({ coordinates = null, setValues }: Props) => {
 				disableDefaultUI={true}
 			>
 				<AdvancedMarker ref={markerRef} position={coordinates} />
-				<MapControl position={ControlPosition.RIGHT_BOTTOM}>
-			        </MapControl>
 			</Map>
 			{!coordinates && (
 				<MapControl position={ControlPosition.LEFT_CENTER}>
